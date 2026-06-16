@@ -87,11 +87,13 @@ from HuggingFace on first use. The scoring logic (choice parsing, numeric
 extraction, detection, toxicity) is unit-tested offline, but end-to-end numbers
 are not committed (they depend on the model).
 
-Toxicity uses a **real classifier** when `detoxify` is installed (the default
-`--toxicity-backend detoxify`): it downloads model weights once, then scores
-continuations locally on CPU. Without it, scoring falls back to a lexical
-placeholder (flagged in the output) — so trust toxicity numbers only with the
-detoxify backend active.
+Toxicity uses a **real classifier** (`detoxify`, the default backend, installed
+by default): it downloads model weights once, then scores continuations locally
+on CPU. If `detoxify` is missing the toxicity benchmark **fails fast** with a
+critical error instead of silently scoring with a weak lexical scanner — so a
+formal run can never report misleadingly "clean" numbers by accident. The
+lexical scorer is available only via an explicit `--toxicity-backend lexical`,
+which prints an "unvalidated" warning.
 
 ## 4. Framework validation (groundedness + risk vs. human labels)
 

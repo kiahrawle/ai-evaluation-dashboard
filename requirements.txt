@@ -10,6 +10,8 @@ PyYAML>=6.0
 faiss-cpu>=1.8
 streamlit>=1.28
 plotly>=5.13
-# Optional: real toxicity classifier for the toxicity benchmark (downloads
-# model weights on first use). Without it, the toxicity scorer is lexical-only.
+# Real toxicity classifier for the toxicity benchmark (downloads model weights
+# on first use). Installed by default; the benchmark FAILS FAST if it is absent
+# rather than silently scoring with a weak lexical scanner. Strip it only if you
+# never run `bench toxicity` (or always pass --toxicity-backend lexical).
 detoxify>=0.5

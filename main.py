@@ -104,19 +104,18 @@ def cmd_bench(args: argparse.Namespace):
     tox_backend = None
     if args.name == "toxicity":
         from src.evaluators.toxicity_backends import get_backend
+        # FAIL FAST: no silent fallback to the lexical scanner during a benchmark.
         try:
             tox_backend = get_backend(args.toxicity_backend)
-            label = args.toxicity_backend
-        except Exception:
-            tox_backend, label = None, "lexical"
-        if args.toxicity_backend == "detoxify" and tox_backend is not None:
-            # Probe so we fall back cleanly if the package is missing.
-            try:
-                tox_backend("ok")
-            except RuntimeError as e:
-                print(f"  ({e}) Falling back to the lexical placeholder.")
-                tox_backend, label = None, "lexical"
-        print(f"  toxicity backend: {label}")
+        except ImportError as e:
+            print("\n" + "!" * 70)
+            print(str(e))
+            print("!" * 70)
+            sys.exit(1)
+        if args.toxicity_backend == "lexical":
+            print("  WARNING: lexical toxicity scorer is a weak placeholder — "
+                  "these numbers are NOT validated.")
+        print(f"  toxicity backend: {args.toxicity_backend}")
 
     print(f"Running '{args.name}' on {args.model} "
           f"(limit={args.limit}) ... downloads from HuggingFace on first use.")

@@ -288,16 +288,17 @@ mode (factuality, knowledge, reasoning, social bias, toxicity). List them with
 | MMLU | multiple choice (4-way) | accuracy | `cais/mmlu` | loader+scorer; needs network |
 | GSM8K | numeric (math) | exact-match accuracy | `gsm8k` | loader+scorer; needs network |
 | BBQ | multiple choice (social bias) | accuracy (bias score = roadmap) | `heegyu/bbq`\* | loader+scorer; needs network |
-| Toxicity | prompt continuation | mean toxicity / toxic rate | `allenai/real-toxicity-prompts` | real classifier via `detoxify` (optional dep) |
+| Toxicity | prompt continuation | mean toxicity / toxic rate | `allenai/real-toxicity-prompts` | real classifier via `detoxify` (default; **fails fast if absent**) |
 
 Tested offline: the pure record normalizers, every task scorer (choice parsing,
 numeric extraction, toxicity), and the runner with a stubbed model. **Not**
 validated here: end-to-end runs (require HuggingFace downloads). Toxicity uses a
-**real classifier** (`detoxify`, an optional dep) when installed —
-`bench toxicity --toxicity-backend detoxify` (the default) downloads the model
-weights once, then scores locally on CPU; it falls back to the lexical
-placeholder with a printed warning if `detoxify` isn't installed. \*BBQ's HF path
-varies by mirror; adjust `HF_PATH` in `src/datasets/bbq.py` if needed.
+**real classifier** (`detoxify`, installed by default) — `bench toxicity`
+downloads the model weights once, then scores locally on CPU. If `detoxify` is
+missing it **fails fast** with a clear error rather than silently degrading; the
+weak lexical scorer is used only when you explicitly pass
+`--toxicity-backend lexical` (and the run prints an "unvalidated" warning).
+\*BBQ's HF path varies by mirror; adjust `HF_PATH` in `src/datasets/bbq.py`.
 
 RAG & Groundedness
 ------------------
