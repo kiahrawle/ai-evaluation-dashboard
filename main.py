@@ -6,6 +6,7 @@ Commands:
   dashboard       - launch a simple visualization (placeholder)
   benchmark       - run the reproducible no-API local detector benchmark
   validate-judge  - check judge agreement with human labels (Cohen's kappa)
+  validate-framework - check groundedness/risk engines vs human labels
   monitor         - stream one answer and track hallucination risk in real time
   list-datasets   - list benchmark datasets in the suite and their scoring
   bench           - run a benchmark (mmlu/gsm8k/bbq/halueval/toxicity) on a model
@@ -140,6 +141,15 @@ def cmd_validate_judge(args: argparse.Namespace):
     validate_judge(args.labels, judge_model=args.judge_model)
 
 
+def cmd_validate_framework(args: argparse.Namespace):
+    from src.research.framework_validation import validate_framework
+    if not Path(args.labels).exists():
+        print(f"Labels CSV not found: {args.labels}")
+        print("Expected columns: response, context, factual_groundedness, risk_level")
+        return
+    validate_framework(args.labels)
+
+
 def main():
     ap = argparse.ArgumentParser(prog="main.py")
     sub = ap.add_subparsers(dest="cmd")
@@ -158,6 +168,12 @@ def main():
                     help="CSV of hand-labelled answers (question, answer, human_truthful)")
     vj.add_argument("--judge-model", default=None,
                     help="Override the judge model (defaults to config.JUDGE_MODEL)")
+
+    vf = sub.add_parser("validate-framework",
+                        help="Check groundedness/risk engines vs human labels "
+                             "(confusion matrix + Pearson)")
+    vf.add_argument("--labels", default="data/validation_human_labels.csv",
+                    help="CSV: response, context, factual_groundedness, risk_level")
 
     mon = sub.add_parser("monitor",
                         help="Stream one answer and track hallucination risk live")
@@ -187,6 +203,8 @@ def main():
         cmd_benchmark(args)
     elif args.cmd == "validate-judge":
         cmd_validate_judge(args)
+    elif args.cmd == "validate-framework":
+        cmd_validate_framework(args)
     elif args.cmd == "monitor":
         cmd_monitor(args)
     elif args.cmd == "list-datasets":

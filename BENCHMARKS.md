@@ -90,6 +90,37 @@ continuations locally on CPU. Without it, scoring falls back to a lexical
 placeholder (flagged in the output) — so trust toxicity numbers only with the
 detoxify backend active.
 
+## 4. Framework validation (groundedness + risk vs. human labels)
+
+The groundedness and risk engines are roadmap layers, so they get the same
+treatment as the judge: checked against human labels. `data/validation_human_labels.csv`
+hand-labels 40 (response, context) pairs with `factual_groundedness` (0/1) and
+`risk_level` (LOW/MEDIUM/HIGH); the validator runs the real engines and reports
+confusion matrices + Pearson correlation.
+
+```bash
+python main.py validate-framework        # uses data/validation_human_labels.csv
+```
+
+Latest run on the 40-row set (deterministic — embeddings, no API):
+
+| Engine | Result |
+|---|---|
+| Groundedness (binary) | accuracy 0.60, precision 0.62, recall 0.83, F1 0.71 (TP 20 / TN 4 / FP 12 / FN 4) |
+| Risk band (3-class) | accuracy 0.55 |
+| Risk score vs human ordinal | Pearson **0.322** (weak) |
+
+**What this tells us — and why it's worth having:** the groundedness engine has
+decent recall but poor precision (12 false positives) — embedding similarity to
+the context stays high even when the response *contradicts* it, so it over-marks
+answers as "supported." The risk engine is weakly correlated (0.32) and, on this
+set, predicted **no** HIGH-risk rows: confident fabrications carry no uncertainty
+markers, so the heuristic risk score misses them. These are real limitations, not
+tuning noise — concrete evidence for why those layers are labelled *roadmap*, and
+a baseline to improve against (e.g. NLI-based contradiction for groundedness,
+reference-aware signals for risk). Expand the CSV with your own labels to harden
+the numbers.
+
 ## Reproducing the figures
 
 | Artifact | Command |

@@ -1,21 +1,16 @@
-## generated eval outputs
-results/
-*.csv
-
-# python
-__pycache__/
+# Python
 *.pyc
-.venv/
-.env
-
-# dashboards
-dashboard_data/ Created by venv; see https://docs.python.org/3/library/venv.html
-*
-venv/
-.venv/
 __pycache__/
-*.pyc
+
+# Environments
 .env
 *.env
+.venv/
+venv/
+
+# Generated eval outputs
 results/
+cache/
 *.csv
+# ...but keep hand-authored datasets under data/ (e.g. validation labels)
+!data/*.csv

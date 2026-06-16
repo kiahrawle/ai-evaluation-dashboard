@@ -53,12 +53,15 @@ Be clear-eyed about what this repo proves today.
   `python main.py validate-judge` reports the judge's agreement with your own
   labels as **Cohen's kappa**. Measure with CIs, validate the judge — that loop
   is what makes the eval defensible.
-- **Roadmap — implemented, not yet validated.** The surrounding "platform"
-  layers (RAG groundedness, the weighted risk engine, real-time stream
-  monitoring, adaptive guardrails, refusal-quality scoring, the dashboard, the
-  leaderboard) are working and unit-tested, but their outputs have **not** been
-  validated against human judgments or at scale. Treat them as a roadmap and a
-  demo, not as measured results.
+- **Roadmap — implemented, measured, not yet good enough.** The surrounding
+  "platform" layers (RAG groundedness, the weighted risk engine, real-time
+  stream monitoring, adaptive guardrails, refusal-quality scoring, the dashboard,
+  the leaderboard) are working and unit-tested. The groundedness and risk engines
+  now have a **validation harness** (`python main.py validate-framework` against
+  40 hand labels) — and it honestly shows they're weak: groundedness accuracy
+  0.60, risk-score/human Pearson 0.32, with confident fabrications slipping
+  through (see [BENCHMARKS.md](BENCHMARKS.md)). Treat these layers as a roadmap
+  with a measured baseline to improve against, not as trustworthy metrics.
 
 The only quantitative claims we stand behind today are the **hallucination rate
 (+ CIs)** and the **judge kappa**. The rule-based detectors additionally have a

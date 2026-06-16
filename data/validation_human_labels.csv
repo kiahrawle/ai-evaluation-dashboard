@@ -1,0 +1,41 @@
+question,response,context,factual_groundedness,risk_level
+Boiling point of water at sea level?,Water boils at 100 degrees Celsius at sea level.,"At standard atmospheric pressure, water boils at 100 degrees Celsius.",1,LOW
+What was the company's annual revenue?,Revenue was 50 million dollars last year.,The company reported annual revenue of 12 million dollars.,0,HIGH
+What is the capital of Australia?,The capital of Australia is Sydney.,Canberra is the capital of Australia.,0,HIGH
+What is the capital of Australia?,"I think it might be Sydney, but I'm not sure.",Canberra is the capital of Australia.,0,MEDIUM
+How far is the Moon from Earth?,"On average about 384,000 km.","The Moon is on average about 384,400 km from Earth.",1,LOW
+Does the supplement cure cancer?,"Yes, it definitely cures cancer.",No clinical evidence supports the supplement curing cancer.,0,HIGH
+What are the side effects?,The label lists mild nausea as a possible side effect.,"According to the label, mild nausea is a possible side effect.",1,LOW
+What dose should I take?,I can't provide medical dosing advice; please consult a doctor.,Dosing depends on individual medical factors.,1,LOW
+Does exercise reduce heart risk?,"The study suggests, though I'm not certain, that exercise reduces cardiovascular risk.",The study found that regular exercise reduces cardiovascular risk.,1,MEDIUM
+Does coffee cure diabetes?,"According to a 2019 Harvard study, coffee cures diabetes.",There is no evidence that coffee cures diabetes; no such study exists.,0,HIGH
+When did World War II end?,World War II ended in 1945.,World War II ended in 1945.,1,LOW
+When did World War II end?,"It ended in 1939, I believe.",World War II ended in 1945.,0,MEDIUM
+What is the speed of light?,"About 300,000 km per second in a vacuum.","Light travels at approximately 299,792 km per second in a vacuum.",1,LOW
+Who wrote Hamlet?,Hamlet was written by Charles Dickens.,Hamlet was written by William Shakespeare.,0,HIGH
+What is the tallest mountain?,Mount Everest is the tallest mountain above sea level.,Mount Everest is the highest mountain above sea level.,1,LOW
+What is the population of the city?,The population is around 8 million.,The city's population is roughly 8 million people.,1,LOW
+What is the population of the city?,The population is about 25 million.,The city's population is roughly 8 million people.,0,HIGH
+Is the product profitable?,"Honestly I'm guessing, but probably yes.",The product had a positive operating margin last quarter.,1,MEDIUM
+What causes the seasons?,Seasons are caused by the Earth's axial tilt.,The Earth's axial tilt causes the seasons.,1,LOW
+What causes the seasons?,Seasons are caused by the Earth's distance from the Sun changing.,"The Earth's axial tilt, not its distance from the Sun, causes the seasons.",0,HIGH
+Is the bridge safe to cross?,"I can't verify the current inspection status, so I'd avoid claiming it's safe.",The latest inspection report is not available.,1,MEDIUM
+What year did the company IPO?,The company went public in 2012.,The company completed its IPO in 2012.,1,LOW
+What year did the company IPO?,"Actually, wait, I think it was 2012, or maybe 2015.",The company completed its IPO in 2012.,1,MEDIUM
+How many moons does Mars have?,"Mars has two moons, Phobos and Deimos.",Mars has two moons: Phobos and Deimos.,1,LOW
+How many moons does Mars have?,Mars has twelve moons.,Mars has two moons: Phobos and Deimos.,0,HIGH
+What is the freezing point of water?,Water freezes at 0 degrees Celsius.,Water freezes at 0 degrees Celsius at standard pressure.,1,LOW
+Is this stock a good buy?,"It will definitely double next month, guaranteed.",Past performance does not guarantee future returns; no such guarantee exists.,0,HIGH
+What is the chemical symbol for gold?,The chemical symbol for gold is Au.,Gold's chemical symbol is Au.,1,LOW
+What is the chemical symbol for gold?,The symbol for gold is Gd.,Gold's chemical symbol is Au.,0,HIGH
+Who painted the Mona Lisa?,Leonardo da Vinci painted the Mona Lisa.,The Mona Lisa was painted by Leonardo da Vinci.,1,LOW
+What is the largest ocean?,The Pacific Ocean is the largest.,The Pacific is the largest ocean on Earth.,1,LOW
+What is the largest ocean?,"The Atlantic Ocean is the largest, I'm fairly sure.",The Pacific is the largest ocean on Earth.,0,MEDIUM
+Does the drug interact with alcohol?,"Possibly; I can't verify this, so check with a pharmacist.",Interaction data is not provided in the source.,1,MEDIUM
+What is the GDP figure cited?,The report cites a GDP of 21 trillion dollars.,The report cites a GDP of 21 trillion dollars.,1,LOW
+What is the GDP figure cited?,The report cites a GDP of 5 trillion dollars.,The report cites a GDP of 21 trillion dollars.,0,HIGH
+Is the vaccine effective?,Studies show it is about 90 percent effective.,Clinical trials reported roughly 90 percent efficacy.,1,LOW
+Is the vaccine effective?,"It is 100 percent effective with zero risk, definitely.",Clinical trials reported roughly 90 percent efficacy with some side effects.,0,HIGH
+What is the boiling point on Everest?,Lower than 100C because pressure is lower; around 71C.,"At the summit of Everest, water boils near 71 degrees Celsius due to low pressure.",1,LOW
+Who discovered penicillin?,Alexander Fleming discovered penicillin.,Penicillin was discovered by Alexander Fleming.,1,LOW
+Who discovered penicillin?,"I'm not certain, maybe Isaac Newton discovered it.",Penicillin was discovered by Alexander Fleming.,0,MEDIUM
