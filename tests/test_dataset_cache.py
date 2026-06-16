@@ -1,4 +1,4 @@
-import src.datasets.cache as cache
+import src.benchmark_data.cache as cache
 
 
 def test_save_load_roundtrip(tmp_path, monkeypatch):

@@ -19,7 +19,7 @@ import sys
 from dotenv import load_dotenv
 load_dotenv()
 
-from src import datasets, pipeline, analyze
+from src import benchmark_data as datasets, pipeline, analyze
 import config
 from src.visualization import plot_hallucination_by_category
 
@@ -216,3 +216,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

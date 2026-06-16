@@ -1,6 +1,6 @@
 """Offline tests for the benchmark loaders: exercise the pure `_normalize`
 functions against representative HF rows (no network)."""
-from src.datasets import mmlu, gsm8k, bbq, halueval, toxicity, registry
+from src.benchmark_data import mmlu, gsm8k, bbq, halueval, toxicity, registry
 
 
 def test_mmlu_normalize():

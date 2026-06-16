@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.append(str(ROOT))
 
-from src.datasets import mmlu, gsm8k, bbq, halueval, toxicity, cache
+from src.benchmark_data import mmlu, gsm8k, bbq, halueval, toxicity, cache
 
 MODULES = {
     "mmlu": mmlu,
@@ -54,7 +54,7 @@ def main():
     if failures:
         print(f"\nDone with errors. Failed: {failures}. "
               f"(BBQ's HF path varies by mirror — adjust HF_PATH in "
-              f"src/datasets/bbq.py if it failed.)")
+              f"src/benchmark_data/bbq.py if it failed.)")
         sys.exit(1)
     print("\nDone. Loaders will now read these from data/cached_benchmarks/ first.")
 

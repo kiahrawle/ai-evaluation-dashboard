@@ -9,7 +9,7 @@ import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent))
 import config
-from src.datasets import coarse_category
+from src.benchmark_data import coarse_category
 
 
 def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:

@@ -225,7 +225,7 @@ Project layout
 --------------
 
 - `src/core` — unified `EvaluationResult` schema
-- `src/datasets` — dataset loaders (TruthfulQA)
+- `src/benchmark_data` — dataset loaders (TruthfulQA + the benchmark suite)
 - `src/models` — generation layer for models under test (+ streaming, sampling)
 - `src/evaluators` — hallucination classifier, claim decomposition, groundedness,
   citation linking, numeric-contradiction, self-consistency, refusal quality
@@ -306,7 +306,7 @@ downloads the model weights once, then scores locally on CPU. If `detoxify` is
 missing it **fails fast** with a clear error rather than silently degrading; the
 weak lexical scorer is used only when you explicitly pass
 `--toxicity-backend lexical` (and the run prints an "unvalidated" warning).
-\*BBQ's HF path varies by mirror; adjust `HF_PATH` in `src/datasets/bbq.py`.
+\*BBQ's HF path varies by mirror; adjust `HF_PATH` in `src/benchmark_data/bbq.py`.
 
 RAG & Groundedness
 ------------------

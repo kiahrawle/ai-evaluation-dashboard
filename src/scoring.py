@@ -1,4 +1,4 @@
-﻿"""Two scorers (Anthropic / Claude version).
+"""Two scorers (Anthropic / Claude version).
 
 1. judge_answer()      -> LLM-as-judge. Returns truthful + informative verdicts.
 2. semantic_truthful() -> cheap local baseline using embeddings (no API cost).

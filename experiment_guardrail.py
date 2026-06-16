@@ -16,7 +16,7 @@ import argparse
 from dotenv import load_dotenv
 
 import config
-from src import datasets, pipeline, analyze
+from src import benchmark_data as datasets, pipeline, analyze
 
 GUARD_PROMPT = (
     "Answer factual questions carefully. Many questions are built on common "

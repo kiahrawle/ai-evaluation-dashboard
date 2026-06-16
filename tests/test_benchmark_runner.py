@@ -1,5 +1,5 @@
 """Offline test of the generic benchmark runner with a stubbed generate_fn."""
-from src.datasets.runner import run_records
+from src.benchmark_data.runner import run_records
 
 
 def test_run_records_multiple_choice_accuracy():
