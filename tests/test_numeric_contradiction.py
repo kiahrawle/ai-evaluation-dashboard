@@ -28,6 +28,16 @@ def test_no_shared_context_no_contradiction():
     assert out["contradiction_detected"] is False
 
 
+def test_paraphrased_subject_still_caught():
+    # Same quantity, different surrounding words. The old word-overlap detector
+    # missed this; the embedding-gated one catches it.
+    docs = [{"text": "The trial reported improvement in 45 percent of patients."}]
+    answer = "The drug reduced symptoms in 90 percent of patients."
+    out = detect_numeric_contradictions(answer, docs)
+    assert out["contradiction_detected"] is True
+    assert out["contradictions"][0]["similarity"] >= 0.45
+
+
 def test_citation_support_links_evidence():
     docs = [
         {"text": "The moon orbits the Earth at an average distance of 384,400 km."},

@@ -18,17 +18,20 @@ Latest run:
 | Component | n | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|---|
 | Refusal detection | 8 | 1.00 | 1.00 | 1.00 | 1.00 |
-| Numeric contradiction | 8 | 0.88 | 1.00 | 0.75 | 0.86 |
+| Numeric contradiction | 8 | 1.00 | 1.00 | 1.00 | 1.00 |
 
 ![Local detector benchmark](docs/benchmark_local.png)
 
-**Reading this honestly:** numeric-contradiction detection has perfect
-precision on the fixture (no false alarms) but recall 0.75 — it misses one true
-contradiction (*"90% of patients"* vs *"45% of patients"*) because the answer
-and document describe the same quantity with different surrounding words
-("symptoms" vs "improvement") and the detector requires a shared context word to
-compare two numbers. That is a known limitation of the lexical-context approach,
-not a tuning artifact. Embedding-aligned context matching would raise recall.
+**How numeric contradiction works (and why recall went 0.75 → 1.00):** the first
+version gated on shared *context words* before comparing numbers, so it missed
+*"90% of patients"* vs *"45% of patients"* — same quantity, different wording
+("symptoms" vs "improvement"). The detector now embeds the number-bearing
+sentences with `all-MiniLM-L6-v2` and compares numbers only when the sentences
+are *semantically* similar (cosine ≥ 0.45, tuned for this model — short factual
+sentences score ~0.5-0.75 for the same fact vs ~0.2-0.35 across topics, so a
+naive 0.75 cutoff would actually miss most real contradictions). Precision stays
+1.00 on the fixture: topically-unrelated numbers (revenue vs population, price vs
+temperature) fall below the threshold and aren't compared.
 
 ## 2. Model hallucination benchmark (requires API keys)
 
