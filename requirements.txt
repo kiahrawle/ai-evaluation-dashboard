@@ -1,0 +1,15 @@
+datasets>=2.18
+openai>=1.30
+sentence-transformers>=2.7
+pandas>=2.0
+python-dotenv>=1.0
+tenacity>=8.2
+matplotlib>=3.0
+pydantic>=1.10
+PyYAML>=6.0
+faiss-cpu>=1.8
+streamlit>=1.28
+plotly>=5.13
+# Optional: real toxicity classifier for the toxicity benchmark (downloads
+# model weights on first use). Without it, the toxicity scorer is lexical-only.
+detoxify>=0.5

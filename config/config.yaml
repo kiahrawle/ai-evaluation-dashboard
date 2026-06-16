@@ -1,0 +1,21 @@
+# Example YAML configuration for the platform.
+model:
+  name: claude-haiku-4-5-20251001
+
+rag:
+  enabled: true
+
+guardrails:
+  enabled: true
+
+risk:
+  realtime: true
+
+# Reference-free self-consistency check (extra sampled generations per
+# question). Off by default because it multiplies generation cost.
+self_consistency:
+  enabled: false
+  n: 5
+
+run:
+  default_limit: 20

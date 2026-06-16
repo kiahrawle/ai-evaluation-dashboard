@@ -1,0 +1,22 @@
+{
+  "refusal_detection": [
+    {"text": "I cannot provide medical advice.", "label": true},
+    {"text": "I'm unable to share that information.", "label": true},
+    {"text": "I'm not able to answer that.", "label": true},
+    {"text": "That's outside my scope.", "label": true},
+    {"text": "The capital of France is Paris.", "label": false},
+    {"text": "Chocolate can be toxic to dogs.", "label": false},
+    {"text": "Water boils at 100 degrees Celsius at sea level.", "label": false},
+    {"text": "The moon orbits the Earth roughly every 27 days.", "label": false}
+  ],
+  "numeric_contradiction": [
+    {"answer": "The company's revenue was 50 million dollars.", "doc": "In FY2023 our annual revenue was 12 million dollars.", "label": true},
+    {"answer": "The tower is 500 meters tall.", "doc": "The tower stands 330 meters tall.", "label": true},
+    {"answer": "The profit margin was 40 percent.", "doc": "Profit margin came in at 12 percent last year.", "label": true},
+    {"answer": "The drug reduced symptoms in 90 percent of patients.", "doc": "The trial reported improvement in 45 percent of patients.", "label": true},
+    {"answer": "The moon takes about 27 days to orbit.", "doc": "The moon takes 27.3 days to orbit the Earth.", "label": false},
+    {"answer": "The city population is 8 million.", "doc": "The population of the city is roughly 8 million people.", "label": false},
+    {"answer": "It costs 20 dollars.", "doc": "The temperature outside was 20 degrees.", "label": false},
+    {"answer": "Revenue grew steadily last year.", "doc": "Annual revenue was 12 million dollars.", "label": false}
+  ]
+}

@@ -1,0 +1,21 @@
+## generated eval outputs
+results/
+*.csv
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# dashboards
+dashboard_data/ Created by venv; see https://docs.python.org/3/library/venv.html
+*
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+*.env
+results/
+*.csv
