@@ -47,11 +47,11 @@ from src import reporting
 
 st.set_page_config(
     page_title="LLM Hallucination Intelligence Platform",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
 )
 
-st.title("🛡️ LLM Hallucination Intelligence Platform")
+st.title("LLM Hallucination Intelligence Platform")
 st.markdown("Real-time evaluation, risk detection, and adaptive safety for LLM responses.")
 
 RISK_COLORS = {"LOW": "#00CC96", "MEDIUM": "#FFA15A", "HIGH": "#FF6B6B"}
@@ -71,7 +71,7 @@ def _no_data_notice():
 
 
 if tab == "Dashboard":
-    st.header("📊 Overview Dashboard")
+    st.header("Overview Dashboard")
     results = reporting.load_results()
 
     if not results:
