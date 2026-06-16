@@ -8,8 +8,11 @@ HF source: pminervini/HaluEval (config "qa").
 """
 from typing import Dict, Any, List, Optional
 
+from .cache import cached_or_download
+
 HF_PATH = "pminervini/HaluEval"
 HF_CONFIG = "qa"
+SPLIT = "data"
 
 _PROMPT = (
     "Knowledge: {knowledge}\n"
@@ -43,7 +46,7 @@ def _normalize(row: Dict[str, Any]) -> List[Dict[str, Any]]:
     return out
 
 
-def load(limit: Optional[int] = None, split: str = "data") -> List[Dict[str, Any]]:
+def _download(limit: Optional[int] = None, split: str = SPLIT) -> List[Dict[str, Any]]:
     from datasets import load_dataset
     ds = load_dataset(HF_PATH, HF_CONFIG)[split]
     rows: List[Dict[str, Any]] = []
@@ -52,3 +55,7 @@ def load(limit: Optional[int] = None, split: str = "data") -> List[Dict[str, Any
         if limit and len(rows) >= limit:
             break
     return rows[:limit] if limit else rows
+
+
+def load(limit: Optional[int] = None, split: str = SPLIT) -> List[Dict[str, Any]]:
+    return cached_or_download("halueval", split, lambda: _download(limit, split), limit)

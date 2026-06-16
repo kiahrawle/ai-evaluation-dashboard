@@ -14,3 +14,7 @@ cache/
 *.csv
 # ...but keep hand-authored datasets under data/ (e.g. validation labels)
 !data/*.csv
+
+# Downloaded benchmark cache (rebuild with scripts/download_benchmarks.py;
+# in CI, restore this dir from cache or run the script in a cached step)
+data/cached_benchmarks/

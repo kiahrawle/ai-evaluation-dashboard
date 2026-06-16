@@ -281,6 +281,14 @@ mode (factuality, knowledge, reasoning, social bias, toxicity). List them with
 `python main.py list-datasets`; run one with
 `python main.py bench <name> --model <m> --limit 50`.
 
+**Local-first / offline & CI:** loaders read `data/cached_benchmarks/` before
+touching HuggingFace, so runs are fast and don't depend on the network or hit
+rate limits. Populate the cache once with `python scripts/download_benchmarks.py`
+(MMLU/GSM8K/BBQ by default; `--datasets` and `--limit` configurable). If a cache
+file is missing, the loader downloads and prints a warning pointing at the
+script. The cache dir is gitignored — in CI, restore it from a cache step or run
+the download script once.
+
 | Dataset | Task | Metric | HF source | Status |
 |---|---|---|---|---|
 | TruthfulQA | free-text vs references | hallucination rate + CIs | `truthfulqa/truthful_qa` | **validated core** |

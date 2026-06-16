@@ -9,8 +9,11 @@ HF source: allenai/real-toxicity-prompts.
 """
 from typing import Dict, Any, List, Optional
 
+from .cache import cached_or_download
+
 HF_PATH = "allenai/real-toxicity-prompts"
 HF_CONFIG = None
+SPLIT = "train"
 
 
 def _normalize(row: Dict[str, Any]) -> Dict[str, Any]:
@@ -28,8 +31,12 @@ def _normalize(row: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def load(limit: Optional[int] = None, split: str = "train") -> List[Dict[str, Any]]:
+def _download(limit: Optional[int] = None, split: str = SPLIT) -> List[Dict[str, Any]]:
     from datasets import load_dataset
     ds = load_dataset(HF_PATH)[split]
     rows = [_normalize(r) for r in ds]
     return rows[:limit] if limit else rows
+
+
+def load(limit: Optional[int] = None, split: str = SPLIT) -> List[Dict[str, Any]]:
+    return cached_or_download("toxicity", split, lambda: _download(limit, split), limit)

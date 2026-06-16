@@ -82,8 +82,17 @@ loaders + task-appropriate scorers (`python main.py list-datasets`):
 | BBQ | multiple choice (social bias) | accuracy (bias score = roadmap) |
 | RealToxicityPrompts | prompt continuation | mean toxicity / toxic rate |
 
-Run one with `python main.py bench mmlu --model <m> --limit 100`. These download
-from HuggingFace on first use. The scoring logic (choice parsing, numeric
+Run one with `python main.py bench mmlu --model <m> --limit 100`. Loaders are
+**local-first**: they read `data/cached_benchmarks/` before touching HuggingFace.
+Cache the datasets once for offline / CI use:
+
+```bash
+python scripts/download_benchmarks.py            # caches mmlu, gsm8k, bbq
+python scripts/download_benchmarks.py --datasets mmlu gsm8k bbq halueval toxicity --limit 1000
+```
+
+A missing cache file triggers a one-off download with a warning. The cache dir
+is gitignored, so restore it from a CI cache step or run the script once. The scoring logic (choice parsing, numeric
 extraction, detection, toxicity) is unit-tested offline, but end-to-end numbers
 are not committed (they depend on the model).
 
