@@ -58,6 +58,26 @@ streamlit run app/app.py
 
 Visit `http://localhost:8501` in your browser.
 
+### Deploying a public demo (cache-only, no key spend)
+
+A public dashboard must not run live generation on your key, and the free tier
+is RAM-limited. Deploy it safe:
+
+1. **Commit the demo data.** `results/results.json` and `cache/*.json` are
+   tracked (negated in `.gitignore`) so the hosted Dashboard/Leaderboard show
+   real numbers with no API key. Don't delete them.
+2. **Turn on cache-only demo mode.** Set the env var `FACTUAL_EVAL_DEMO=1` (or a
+   `demo_mode = true` Streamlit secret). Only the offline tabs (Dashboard,
+   Leaderboard, "Run locally") are shown — Live Evaluation and Upload (which load
+   the embedding model) are hidden, so the app boots light and loads no torch.
+3. **Never bake your key into the image.** If you *do* want a live feature
+   public, put the key in Streamlit's Secrets manager (not `.env`); `app.py`
+   bridges `st.secrets["ANTHROPIC_API_KEY"]` into the environment at startup.
+   Set a hard spend cap on your Anthropic account first.
+
+The heavy ML imports (sentence-transformers/torch, FAISS) are lazy-loaded inside
+the tabs that need them, so the cache-only build never imports them.
+
 ### 4. Run CLI Evaluation
 
 ```bash
