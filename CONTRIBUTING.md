@@ -33,7 +33,7 @@ dataset `_normalize`) from the I/O around it (the HF fetch).
 - Keep provider-specific code isolated (generation in `src/models/`, judge
   routing in `src/scoring.py`).
 - New benchmarks: add a loader that normalizes to the registry schema, register
-  it in `src/datasets/registry.py`, and add a scorer in
+  it in `src/benchmark_data/registry.py`, and add a scorer in
   `src/evaluators/tasks.py` if the task type is new.
 
 ## Honesty rule
