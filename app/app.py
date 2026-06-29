@@ -4,6 +4,11 @@ Data-bearing tabs read real evaluation output from results/results.json (written
 by `analyze.summarize`). When no results exist yet, each tab shows an honest
 empty state rather than mock numbers. The Live Evaluation and Upload tabs run
 real local computation (topic detection, risk markers, RAG grounding).
+
+The look-and-feel is a custom design system (gradient/glass metric cards, neon
+accent palette, Poppins/Inter type, rounded corners, hover + transition motion)
+applied purely through injected CSS and a shared Plotly theme, so none of the
+evaluation logic below is coupled to presentation.
 """
 import streamlit as st
 import pandas as pd
@@ -47,19 +52,197 @@ from src import reporting
 
 st.set_page_config(
     page_title="LLM Hallucination Intelligence Platform",
-    page_icon="",
+    page_icon="🧠",
     layout="wide",
 )
 
-st.title("LLM Hallucination Intelligence Platform")
-st.markdown("Real-time evaluation, risk detection, and adaptive safety for LLM responses.")
+# ---------------------------------------------------------------------------
+# Design system
+# ---------------------------------------------------------------------------
+# Palette: a vibrant, neon-accented light theme. Each token is referenced by the
+# injected CSS *and* the shared Plotly template so charts and chrome stay in sync.
+PRIMARY = "#0066FF"   # electric blue
+ACCENT_PINK = "#FF3366"
+ACCENT_LIME = "#00D26A"
+ACCENT_PURPLE = "#7C3AED"
+BG = "#F5F7FA"
+INK = "#1F2937"
+MUTED = "#6B7280"
 
-RISK_COLORS = {"LOW": "#00CC96", "MEDIUM": "#FFA15A", "HIGH": "#FF6B6B"}
+RISK_COLORS = {"LOW": ACCENT_LIME, "MEDIUM": "#FFA15A", "HIGH": ACCENT_PINK}
+CHART_SEQUENCE = [PRIMARY, ACCENT_PINK, ACCENT_LIME, ACCENT_PURPLE, "#FFA15A", "#06B6D4"]
+
+
+def _inject_theme() -> None:
+    """Inject the full CSS design system once per page render."""
+    st.markdown(
+        f"""
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+        <style>
+            :root {{
+                --primary: {PRIMARY};
+                --pink: {ACCENT_PINK};
+                --lime: {ACCENT_LIME};
+                --purple: {ACCENT_PURPLE};
+                --ink: {INK};
+                --muted: {MUTED};
+                --radius: 20px;
+                --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+                --shadow-hover: 0 18px 45px rgba(31, 41, 55, 0.16);
+            }}
+
+            html, body, [class*="css"], .stApp, [data-testid="stMarkdownContainer"] {{
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+                color: var(--ink);
+            }}
+
+            .stApp {{
+                background:
+                    radial-gradient(1200px 600px at 100% -10%, rgba(124,58,237,0.08), transparent 60%),
+                    radial-gradient(1000px 500px at -10% 0%, rgba(0,102,255,0.08), transparent 55%),
+                    {BG};
+            }}
+
+            .block-container {{ padding-top: 2rem; padding-bottom: 4rem; max-width: 1400px; }}
+
+            h1, h2, h3, h4 {{ font-family: 'Poppins', 'Inter', sans-serif; letter-spacing: -0.02em; }}
+
+            /* ---- Hero header ---- */
+            .hero {{
+                background: linear-gradient(120deg, var(--primary), var(--purple) 55%, var(--pink));
+                border-radius: 24px;
+                padding: 30px 36px;
+                color: #fff;
+                box-shadow: var(--shadow);
+                margin-bottom: 26px;
+            }}
+            .hero h1 {{ color: #fff; font-size: 2.1rem; margin: 0 0 6px 0; }}
+            .hero p {{ color: rgba(255,255,255,0.92); margin: 0; font-size: 1.02rem; }}
+            .hero .pills {{ margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }}
+            .pill {{
+                background: rgba(255,255,255,0.18);
+                border: 1px solid rgba(255,255,255,0.30);
+                color: #fff; font-size: 0.78rem; font-weight: 600;
+                padding: 5px 12px; border-radius: 999px; backdrop-filter: blur(6px);
+            }}
+
+            /* ---- Metric cards (glassmorphism) ---- */
+            [data-testid="stMetric"] {{
+                background: rgba(255,255,255,0.75);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.6);
+                border-radius: var(--radius);
+                padding: 18px 20px 16px 20px;
+                box-shadow: var(--shadow);
+                transition: transform .25s ease, box-shadow .25s ease;
+                overflow: hidden; position: relative;
+            }}
+            [data-testid="stMetric"]::before {{
+                content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+                background: var(--primary);
+            }}
+            [data-testid="stMetric"]:hover {{ transform: translateY(-4px); box-shadow: var(--shadow-hover); }}
+            [data-testid="stMetricLabel"] p {{ color: var(--muted); font-weight: 600; font-size: 0.82rem; }}
+            [data-testid="stMetricValue"] {{ font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--ink); }}
+
+            /* Rotate the accent bar across cards in a row */
+            [data-testid="stHorizontalBlock"] > div:nth-child(4n+1) [data-testid="stMetric"]::before {{ background: var(--primary); }}
+            [data-testid="stHorizontalBlock"] > div:nth-child(4n+2) [data-testid="stMetric"]::before {{ background: var(--pink); }}
+            [data-testid="stHorizontalBlock"] > div:nth-child(4n+3) [data-testid="stMetric"]::before {{ background: var(--lime); }}
+            [data-testid="stHorizontalBlock"] > div:nth-child(4n+4) [data-testid="stMetric"]::before {{ background: var(--purple); }}
+
+            /* ---- Buttons (purple→blue gradient CTA) ---- */
+            .stButton > button {{
+                background: linear-gradient(120deg, var(--purple), var(--primary));
+                color: #fff; border: none; border-radius: 14px;
+                padding: 0.6rem 1.2rem; font-weight: 600; font-family: 'Inter', sans-serif;
+                box-shadow: 0 8px 20px rgba(124,58,237,0.28);
+                transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+            }}
+            .stButton > button:hover {{ transform: translateY(-2px); box-shadow: 0 14px 30px rgba(124,58,237,0.38); filter: brightness(1.05); }}
+            .stButton > button:active {{ transform: translateY(0); }}
+
+            /* ---- Inputs ---- */
+            .stTextInput input, .stTextArea textarea, [data-baseweb="select"] > div {{
+                border-radius: 12px !important; border: 1px solid #E2E8F0 !important;
+                background: rgba(255,255,255,0.9) !important;
+            }}
+            .stTextInput input:focus, .stTextArea textarea:focus {{
+                border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(0,102,255,0.15) !important;
+            }}
+
+            /* ---- Sidebar nav ---- */
+            [data-testid="stSidebar"] {{
+                background: linear-gradient(180deg, #ffffff, #f3f5fb);
+                border-right: 1px solid rgba(31,41,55,0.06);
+            }}
+            [data-testid="stSidebar"] [role="radiogroup"] label {{
+                border-radius: 12px; padding: 8px 12px; margin: 2px 0;
+                transition: background .2s ease, transform .15s ease;
+            }}
+            [data-testid="stSidebar"] [role="radiogroup"] label:hover {{
+                background: rgba(0,102,255,0.08); transform: translateX(3px);
+            }}
+
+            /* ---- Tables, alerts, dividers ---- */
+            [data-testid="stDataFrame"] {{ border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }}
+            [data-testid="stAlert"] {{ border-radius: 14px; border: none; box-shadow: var(--shadow); }}
+            hr {{ border-color: rgba(31,41,55,0.08); }}
+
+            /* Plotly chart cards */
+            [data-testid="stPlotlyChart"] {{
+                background: rgba(255,255,255,0.7); border-radius: var(--radius);
+                padding: 8px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.6);
+            }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _style_fig(fig: go.Figure) -> go.Figure:
+    """Apply the shared chart theme: transparent card background, brand font and
+    the neon color sequence. Keeps every Plotly figure visually consistent."""
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter, Segoe UI, sans-serif", color=INK, size=13),
+        colorway=CHART_SEQUENCE,
+        margin=dict(t=40, r=20, b=20, l=20),
+        legend=dict(bgcolor="rgba(0,0,0,0)"),
+        title_font=dict(family="Poppins, Inter, sans-serif"),
+    )
+    fig.update_xaxes(gridcolor="rgba(31,41,55,0.06)", zeroline=False)
+    fig.update_yaxes(gridcolor="rgba(31,41,55,0.06)", zeroline=False)
+    return fig
+
+
+_inject_theme()
+
+# ---- Hero header ----
+st.markdown(
+    """
+    <div class="hero">
+        <h1>🧠 LLM Hallucination Intelligence Platform</h1>
+        <p>Real-time evaluation, risk detection, and adaptive safety for LLM responses.</p>
+        <div class="pills">
+            <span class="pill">⚡ Live risk scoring</span>
+            <span class="pill">📑 RAG grounding</span>
+            <span class="pill">🛡️ Adaptive guardrails</span>
+            <span class="pill">🏆 Model leaderboard</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # Sidebar navigation
+st.sidebar.markdown("### 🧭 Navigation")
 tab = st.sidebar.radio(
     "Navigation",
     ["Dashboard", "Live Evaluation", "Upload & Analyze", "Leaderboard", "Settings"],
+    label_visibility="collapsed",
 )
 
 
@@ -100,8 +283,9 @@ if tab == "Dashboard":
                 risk_df = pd.DataFrame({"Risk Level": list(dist.keys()),
                                         "Count": list(dist.values())})
                 fig = px.pie(risk_df, values="Count", names="Risk Level",
-                             color="Risk Level", color_discrete_map=RISK_COLORS)
-                st.plotly_chart(fig, width='stretch')
+                             color="Risk Level", color_discrete_map=RISK_COLORS, hole=0.55)
+                fig.update_traces(textposition="inside", textinfo="percent+label")
+                st.plotly_chart(_style_fig(fig), width='stretch')
 
         with col_right:
             st.subheader("Hallucination by Category")
@@ -114,7 +298,7 @@ if tab == "Dashboard":
                           .sort_values("Hallucination Rate", ascending=False))
                 fig = px.bar(cat_df, x="Category", y="Hallucination Rate",
                              color="Hallucination Rate", color_continuous_scale="RdYlGn_r")
-                st.plotly_chart(fig, width='stretch')
+                st.plotly_chart(_style_fig(fig), width='stretch')
 
 
 elif tab == "Live Evaluation":
@@ -278,36 +462,15 @@ elif tab == "Leaderboard":
             comp = lb[lb["model"].isin(models_to_compare)]
             fig = go.Figure()
             fig.add_trace(go.Bar(x=comp["model"], y=comp["hallucination_rate"],
-                                 name="Hallucination Rate"))
-            fig.add_trace(go.Bar(x=comp["model"], y=comp["groundedness"], name="Groundedness"))
+                                 name="Hallucination Rate", marker_color=ACCENT_PINK))
+            fig.add_trace(go.Bar(x=comp["model"], y=comp["groundedness"],
+                                 name="Groundedness", marker_color=PRIMARY))
             fig.update_layout(barmode="group", xaxis_title="Model", yaxis_title="Score")
-            st.plotly_chart(fig, width='stretch')
+            st.plotly_chart(_style_fig(fig), width='stretch')
     else:
         _no_data_notice()
         st.caption("The leaderboard populates automatically once you evaluate one "
                    "or more models.")
-
-
-elif tab == "Run locally":
-    st.header("🖥️ Run locally")
-    st.markdown(
-        "This hosted demo is **cache-only**: the Dashboard and Leaderboard show "
-        "real results committed to the repo — no API key, no model loading, no "
-        "way for a visitor to spend anyone's credits.\n\n"
-        "The interactive features (Live Evaluation, Upload→RAG grounding, the "
-        "real-time risk monitor, and full model evaluations) run locally:"
-    )
-    st.code(
-        "git clone <repo> && cd factual-eval\n"
-        "python -m venv .venv && . .venv/Scripts/activate\n"
-        "pip install -r requirements.txt\n"
-        "cp .env.example .env        # add your ANTHROPIC_API_KEY\n"
-        "streamlit run app/app.py    # full UI (all tabs)\n"
-        'python main.py monitor --question "..."   # live risk monitor',
-        language="bash",
-    )
-    st.caption("Set FACTUAL_EVAL_DEMO=1 to run the dashboard in this cache-only "
-               "mode; unset it for the full local UI.")
 
 
 elif tab == "Settings":
@@ -335,8 +498,6 @@ elif tab == "Settings":
 
 st.markdown("---")
 st.markdown(
-    "By Kiah Rawle | "
-    "[GitHub](https://github.com/kiahrawle/ai-evaluation-dashboard) | "
-    
+    "By Kiah Rawle &nbsp;|&nbsp; "
+    "[GitHub](https://github.com/kiahrawle/ai-evaluation-dashboard)"
 )
-
